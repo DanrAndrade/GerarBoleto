@@ -3,30 +3,28 @@ package br.com.geradorboleto.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale; // Para formatação de moeda
-import java.util.Objects; // Para validações
+import java.util.Locale;
+import java.util.Objects;
 
 public class Boleto {
     private Pessoa sacado;
-    private Pessoa beneficiario; // Cedente no exemplo K19
+    private Pessoa beneficiario;
     private Banco banco;
     private BigDecimal valor;
     private LocalDate dataVencimento;
     private LocalDate dataDocumento;
-    private String numeroDocumento; // Número que identifica o boleto para o cedente
-    private String nossoNumero; // Número formatado para exibição (pode incluir DV)
-    private String instrucoes; // Opcional
+    private String numeroDocumento;
+    private String nossoNumero;
+    private String instrucoes;
 
-    // Campos Calculados
     private String codigoBarras;
     private String linhaDigitavel;
 
-    // Formatter padrão para datas e moeda
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final Locale BRAZIL_LOCALE = new Locale("pt", "BR");
 
-    // Construtor protegido para ser usado pelo Builder
-    protected Boleto() {}
+    // --- Construtor agora é PUBLIC ---
+    public Boleto() {}
 
     // --- Getters ---
     public Pessoa getSacado() { return sacado; }
@@ -41,40 +39,36 @@ public class Boleto {
     public String getCodigoBarras() { return codigoBarras; }
     public String getLinhaDigitavel() { return linhaDigitavel; }
 
-    // --- Setters (Usados pelo Builder) ---
-    protected void setSacado(Pessoa sacado) { this.sacado = sacado; }
-    protected void setBeneficiario(Pessoa beneficiario) { this.beneficiario = beneficiario; }
-    protected void setBanco(Banco banco) { this.banco = banco; }
-    protected void setValor(BigDecimal valor) { this.valor = valor; }
-    protected void setDataVencimento(LocalDate dataVencimento) { this.dataVencimento = dataVencimento; }
-    protected void setDataDocumento(LocalDate dataDocumento) { this.dataDocumento = dataDocumento; }
-    protected void setNumeroDocumento(String numeroDocumento) { this.numeroDocumento = numeroDocumento; }
-    protected void setNossoNumero(String nossoNumero) { this.nossoNumero = nossoNumero; }
-    protected void setInstrucoes(String instrucoes) { this.instrucoes = instrucoes; }
-    protected void setCodigoBarras(String codigoBarras) { this.codigoBarras = codigoBarras; }
-    protected void setLinhaDigitavel(String linhaDigitavel) { this.linhaDigitavel = linhaDigitavel; }
+    // --- Setters agora são PUBLIC ---
+    public void setSacado(Pessoa sacado) { this.sacado = sacado; }
+    public void setBeneficiario(Pessoa beneficiario) { this.beneficiario = beneficiario; }
+    public void setBanco(Banco banco) { this.banco = banco; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
+    public void setDataVencimento(LocalDate dataVencimento) { this.dataVencimento = dataVencimento; }
+    public void setDataDocumento(LocalDate dataDocumento) { this.dataDocumento = dataDocumento; }
+    public void setNumeroDocumento(String numeroDocumento) { this.numeroDocumento = numeroDocumento; }
+    public void setNossoNumero(String nossoNumero) { this.nossoNumero = nossoNumero; }
+    public void setInstrucoes(String instrucoes) { this.instrucoes = instrucoes; }
+    public void setCodigoBarras(String codigoBarras) { this.codigoBarras = codigoBarras; }
+    public void setLinhaDigitavel(String linhaDigitavel) { this.linhaDigitavel = linhaDigitavel; }
 
-    // --- Métodos Auxiliares ---
 
-    // Formata a linha digitável com pontos e espaços para exibição
     public String formatarLinhaDigitavel(String linha) {
         if (linha == null || linha.length() != 47) {
             return "Linha Digitável Inválida";
         }
-        // Formato: AAAAA.BBBBB CCCCC.DDDDD EEEEE.FFFFF G HHHHHHHHHHHHHH
         return String.format("%s.%s %s.%s %s.%s %s %s",
-                linha.substring(0, 5),   // Campo 1 (parte 1)
-                linha.substring(5, 10),  // Campo 1 (parte 2 + DV1)
-                linha.substring(10, 15), // Campo 2 (parte 1)
-                linha.substring(15, 21), // Campo 2 (parte 2 + DV2)
-                linha.substring(21, 26), // Campo 3 (parte 1)
-                linha.substring(26, 32), // Campo 3 (parte 2 + DV3)
-                linha.substring(32, 33), // Campo 4 (DV Geral do Código de Barras)
-                linha.substring(33)      // Campo 5 (Fator Vencimento + Valor)
+                linha.substring(0, 5),
+                linha.substring(5, 10),
+                linha.substring(10, 15),
+                linha.substring(15, 21),
+                linha.substring(21, 26),
+                linha.substring(26, 32),
+                linha.substring(32, 33),
+                linha.substring(33)
         );
     }
 
-    // Método toString para fácil visualização no console
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -91,7 +85,7 @@ public class Boleto {
         }
         sb.append("----------------------------------------------------------------------------------\n");
         if (dataVencimento != null) sb.append("Data Vencimento: ").append(dataVencimento.format(DATE_FORMATTER)).append("\t\t");
-        if (banco != null) sb.append("Agência/Código Beneficiário: ").append(banco.getAgencia()).append(" / ").append(banco.getContaCorrente()).append("\n"); // Ajustar formato se necessário
+        if (banco != null) sb.append("Agência/Código Beneficiário: ").append(banco.getAgencia()).append(" / ").append(banco.getContaCorrente()).append("\n");
         if (dataDocumento != null) sb.append("Data Documento: ").append(dataDocumento.format(DATE_FORMATTER)).append("\t\t");
         if (nossoNumero != null) sb.append("Nosso Número: ").append(nossoNumero).append("\n");
         if (numeroDocumento != null) sb.append("Número Documento: ").append(numeroDocumento).append("\t\t");
